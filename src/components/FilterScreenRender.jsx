@@ -4,24 +4,24 @@ import React, {
   useMemo,
   useCallback,
   useRef,
-} from "react";
-import html2canvas from "html2canvas";
-import QRCode from "qrcode";
+} from 'react';
+import html2canvas from 'html2canvas';
+import QRCode from 'qrcode';
 import {
   uploadImageToFirebase,
   generateUniqueFileName,
-} from "../firebase/storage.js";
-import FilterScreen from "./FilterScreen.jsx";
-import Overlay from "./Overlay.jsx";
-import { createScreenSketch } from "../filters/createScreenSketch.js";
-import { filters } from "../filters";
-import backIcon from "../assets/arrow_left.svg";
-import homeIcon from "../assets/home.svg";
-import "../styles/FilterScreenRender.css";
+} from '../firebase/storage.js';
+import FilterScreen from './FilterScreen.jsx';
+import Overlay from './Overlay.jsx';
+import { createScreenSketch } from '../filters/createScreenSketch.js';
+import { filters } from '../filters';
+import backIcon from '../assets/arrow_left.svg';
+import homeIcon from '../assets/home.svg';
+import '../styles/FilterScreenRender.css';
 import {
   getCameraCapabilities,
   getFullScreenResolution,
-} from "../utils/cameraUtils.js";
+} from '../utils/cameraUtils.js';
 
 function FilterScreenRender({
   filterIndex,
@@ -47,7 +47,7 @@ function FilterScreenRender({
       );
       containers.forEach((container) => {
         console.log(
-          "🧹 FilterScreenRender 언마운트: html2canvas-container 정리:",
+          '🧹 FilterScreenRender 언마운트: html2canvas-container 정리:',
           container
         );
         container.remove();
@@ -60,7 +60,7 @@ function FilterScreenRender({
       canvasElements.forEach((canvas) => {
         if (canvas.parentElement && canvas.parentElement !== document.body) {
           console.log(
-            "🧹 FilterScreenRender 언마운트: 임시 canvas 요소 정리:",
+            '🧹 FilterScreenRender 언마운트: 임시 canvas 요소 정리:',
             canvas
           );
           canvas.remove();
@@ -80,7 +80,7 @@ function FilterScreenRender({
           `[FullScreen] 최대 해상도 사용: ${fullScreenResolution.width}x${fullScreenResolution.height}`
         );
 
-        const p5video = document.createElement("video");
+        const p5video = document.createElement('video');
         navigator.mediaDevices
           .getUserMedia({
             video: {
@@ -97,23 +97,23 @@ function FilterScreenRender({
 
             const onLoadedMetadata = () => {
               console.log(
-                "Video size:",
+                'Video size:',
                 p5video.videoWidth,
                 p5video.videoHeight
               );
               setVideo(p5video);
               setVideoReady(true);
-              p5video.removeEventListener("loadedmetadata", onLoadedMetadata);
+              p5video.removeEventListener('loadedmetadata', onLoadedMetadata);
             };
 
             if (p5video.readyState >= 2) {
               onLoadedMetadata();
             } else {
-              p5video.addEventListener("loadedmetadata", onLoadedMetadata);
+              p5video.addEventListener('loadedmetadata', onLoadedMetadata);
             }
           })
           .catch((err) => {
-            console.error("웹캠 접근 오류:", err);
+            console.error('웹캠 접근 오류:', err);
             onError && onError(err);
           });
 
@@ -123,7 +123,7 @@ function FilterScreenRender({
           }
         };
       } catch (err) {
-        console.error("카메라 설정 오류:", err);
+        console.error('카메라 설정 오류:', err);
         onError && onError(err);
       }
     };
@@ -153,12 +153,12 @@ function FilterScreenRender({
 
   // 필터 오류 시 반환
   if (
-    typeof filterIndex !== "number" ||
+    typeof filterIndex !== 'number' ||
     filterIndex < 0 ||
     filterIndex >= filters.length
   ) {
     return (
-      <div style={{ padding: "1rem", textAlign: "center" }}>
+      <div style={{ padding: '1rem', textAlign: 'center' }}>
         <p>유효하지 않은 필터입니다.</p>
         <div className="btn_container">
           <button className="btn_container-back" onClick={onBack}>
@@ -193,7 +193,7 @@ function FilterScreenRender({
   // 촬영 함수
   function runSingleCapture() {
     return new Promise((resolve) => {
-      let count = 10;
+      let count = 8;
       setCountdown(count);
 
       const interval = setInterval(() => {
@@ -208,9 +208,9 @@ function FilterScreenRender({
             setShowFlash(false);
 
             // 개별 이미지 저장 로직
-            const canvas = document.querySelector("canvas");
+            const canvas = document.querySelector('canvas');
             if (canvas) {
-              const imageData = canvas.toDataURL("image/png");
+              const imageData = canvas.toDataURL('image/png');
               setCapturedImages((prev) => [...prev, imageData]);
             }
 
@@ -226,8 +226,8 @@ function FilterScreenRender({
     const displayContainerRef = useRef();
     const [printCopies, setPrintCopies] = useState(1); // 출력 매수
     const [isPrinting, setIsPrinting] = useState(false); // 프린트 진행 상태
-    const [qrCodeUrl, setQrCodeUrl] = useState(""); // QR코드 이미지 URL
-    const [qrTargetUrl, setQrTargetUrl] = useState(""); // QR코드가 가리키는 실제 URL
+    const [qrCodeUrl, setQrCodeUrl] = useState(''); // QR코드 이미지 URL
+    const [qrTargetUrl, setQrTargetUrl] = useState(''); // QR코드가 가리키는 실제 URL
 
     // 화면 크기에 따른 반응형 스케일링
     useEffect(() => {
@@ -257,8 +257,8 @@ function FilterScreenRender({
       };
 
       updateScale();
-      window.addEventListener("resize", updateScale);
-      return () => window.removeEventListener("resize", updateScale);
+      window.addEventListener('resize', updateScale);
+      return () => window.removeEventListener('resize', updateScale);
     }, []);
 
     // QR코드는 사용자가 버튼을 클릭할 때 생성
@@ -268,19 +268,19 @@ function FilterScreenRender({
     const handleQRCodeGenerate = async () => {
       if (!resultRef.current) return;
 
-      console.log("QR코드용 이미지 저장 시작...");
+      console.log('QR코드용 이미지 저장 시작...');
 
       // 폰트 로드 대기
       try {
-        await document.fonts.load("300 38px PyeongChangPeace-Light");
-        await document.fonts.load("400 16px sans-serif");
-        console.log("🔤 폰트 로드 완료");
+        await document.fonts.load('300 38px PyeongChangPeace-Light');
+        await document.fonts.load('400 16px sans-serif');
+        console.log('🔤 폰트 로드 완료');
       } catch (error) {
-        console.warn("폰트 로드 실패:", error);
+        console.warn('폰트 로드 실패:', error);
       }
 
       await Promise.all(
-        Array.from(resultRef.current.querySelectorAll("img")).map((img) => {
+        Array.from(resultRef.current.querySelectorAll('img')).map((img) => {
           if (img.complete) return Promise.resolve();
           return new Promise((res) => {
             img.onload = res;
@@ -290,9 +290,9 @@ function FilterScreenRender({
       );
 
       // 저장용 요소를 활성화 (화면에는 보이지 않음)
-      resultRef.current.classList.add("saving");
+      resultRef.current.classList.add('saving');
 
-      console.log("저장용 요소 활성화 중...");
+      console.log('저장용 요소 활성화 중...');
 
       // 잠시 대기 (DOM 업데이트 완료 + 폰트 렌더링)
       await new Promise((resolve) => setTimeout(resolve, 300));
@@ -302,17 +302,17 @@ function FilterScreenRender({
         width: 800,
         height: 1200,
         useCORS: true,
-        backgroundColor: "#ffffff",
+        backgroundColor: '#ffffff',
         logging: false,
         allowTaint: true,
         removeContainer: false,
         foreignObjectRendering: false,
         imageTimeout: 15000,
         onclone: (clonedDoc) => {
-          console.log("문서 클론 중...");
+          console.log('문서 클론 중...');
 
           // 폰트 스타일을 명시적으로 적용
-          const style = clonedDoc.createElement("style");
+          const style = clonedDoc.createElement('style');
           style.textContent = `
             @font-face {
               font-family: 'PyeongChangPeace-Light';
@@ -328,31 +328,31 @@ function FilterScreenRender({
           clonedDoc.head.appendChild(style);
 
           // 이미지 품질 향상
-          const imgs = clonedDoc.querySelectorAll("img");
+          const imgs = clonedDoc.querySelectorAll('img');
           imgs.forEach((img) => {
-            img.style.imageRendering = "high-quality";
+            img.style.imageRendering = 'high-quality';
           });
         },
       });
 
       // 저장용 요소를 다시 비활성화
-      resultRef.current.classList.remove("saving");
+      resultRef.current.classList.remove('saving');
 
       console.log(`저장 완료: ${canvas.width}x${canvas.height}px`);
 
       // 고품질 PNG로 저장 (기존 방식)
-      const dataUrl = canvas.toDataURL("image/png", 1.0);
+      const dataUrl = canvas.toDataURL('image/png', 1.0);
 
       // 현재 시간을 기반으로 고유 ID 생성
       const imageId = Date.now().toString();
 
       // 단일 이미지 생성 및 저장 (뷰어용)
-      const singleImageCanvas = document.createElement("canvas");
-      const singleCtx = singleImageCanvas.getContext("2d");
+      const singleImageCanvas = document.createElement('canvas');
+      const singleCtx = singleImageCanvas.getContext('2d');
 
       // result-container들의 실제 레이아웃 찾기
       const resultContainers =
-        resultRef.current.querySelectorAll(".result-container");
+        resultRef.current.querySelectorAll('.result-container');
       const firstContainer = resultContainers[0];
 
       if (firstContainer) {
@@ -379,7 +379,7 @@ function FilterScreenRender({
         singleImageCanvas.height = targetHeight;
 
         // 흰색 배경
-        singleCtx.fillStyle = "#ffffff";
+        singleCtx.fillStyle = '#ffffff';
         singleCtx.fillRect(0, 0, targetWidth, targetHeight);
 
         // 정확한 위치에서 첫 번째 이미지 영역 추출
@@ -400,14 +400,14 @@ function FilterScreenRender({
         // fallback: 기존 방식 사용
         singleImageCanvas.width = 400;
         singleImageCanvas.height = 600;
-        singleCtx.fillStyle = "#ffffff";
+        singleCtx.fillStyle = '#ffffff';
         singleCtx.fillRect(0, 0, 400, 600);
         singleCtx.drawImage(canvas, 0, 0, 800, 1200, 0, 0, 400, 600);
-        console.log("컨테이너를 찾지 못해 기존 방식 사용");
+        console.log('컨테이너를 찾지 못해 기존 방식 사용');
       }
 
       // 이미지를 고품질 PNG로 변환 (Firebase 업로드용 - 무손실 압축)
-      const singleImageDataUrl = singleImageCanvas.toDataURL("image/png");
+      const singleImageDataUrl = singleImageCanvas.toDataURL('image/png');
 
       console.log(
         `Firebase 업로드용 이미지 생성: ${Math.round(
@@ -417,14 +417,14 @@ function FilterScreenRender({
 
       try {
         // Firebase Storage에 업로드
-        const fileName = generateUniqueFileName("photobooth");
-        console.log("Firebase Storage 업로드 시작...");
+        const fileName = generateUniqueFileName('photobooth');
+        console.log('Firebase Storage 업로드 시작...');
 
         const downloadURL = await uploadImageToFirebase(
           singleImageDataUrl,
           fileName
         );
-        console.log("Firebase 업로드 완료:", downloadURL);
+        console.log('Firebase 업로드 완료:', downloadURL);
 
         // 이미지 뷰어 페이지 URL 생성 (Base64로 안전하게 인코딩)
         const currentOrigin = window.location.origin;
@@ -434,28 +434,28 @@ function FilterScreenRender({
         const encodedFirebaseUrl = btoa(downloadURL);
         const imageViewerUrl = `${currentOrigin}${currentPath}?view=image&firebaseUrl=${encodedFirebaseUrl}`;
 
-        console.log("생성된 이미지 뷰어 URL:", imageViewerUrl);
-        console.log("Firebase 다운로드 URL:", downloadURL);
-        console.log("Base64 인코딩된 Firebase URL:", encodedFirebaseUrl);
+        console.log('생성된 이미지 뷰어 URL:', imageViewerUrl);
+        console.log('Firebase 다운로드 URL:', downloadURL);
+        console.log('Base64 인코딩된 Firebase URL:', encodedFirebaseUrl);
 
         // QR 코드 생성
         const qrCodeDataUrl = await QRCode.toDataURL(imageViewerUrl, {
           width: 150,
           margin: 2,
           color: {
-            dark: "#1647C1",
-            light: "#FFFFFF",
+            dark: '#1647C1',
+            light: '#FFFFFF',
           },
-          errorCorrectionLevel: "L",
+          errorCorrectionLevel: 'L',
         });
 
         setQrCodeUrl(qrCodeDataUrl);
         setQrTargetUrl(imageViewerUrl);
-        console.log("QR코드 생성 완료 (웹 URL 방식)");
+        console.log('QR코드 생성 완료 (웹 URL 방식)');
       } catch (qrError) {
-        console.error("모든 방식 실패:", qrError);
+        console.error('모든 방식 실패:', qrError);
         alert(
-          "이미지가 너무 커서 QR코드로 변환할 수 없습니다. 이미지 크기를 줄여주세요."
+          '이미지가 너무 커서 QR코드로 변환할 수 없습니다. 이미지 크기를 줄여주세요.'
         );
       }
     };
@@ -463,10 +463,10 @@ function FilterScreenRender({
     // QR코드 클릭 핸들러
     const handleQRCodeClick = () => {
       if (qrTargetUrl) {
-        console.log("QR코드 클릭, 이동할 URL:", qrTargetUrl);
-        window.open(qrTargetUrl, "_blank");
+        console.log('QR코드 클릭, 이동할 URL:', qrTargetUrl);
+        window.open(qrTargetUrl, '_blank');
       } else {
-        console.warn("QR코드 클릭됐지만 타겟 URL이 없음");
+        console.warn('QR코드 클릭됐지만 타겟 URL이 없음');
       }
     };
 
@@ -478,12 +478,12 @@ function FilterScreenRender({
 
       try {
         // 폰트 로드 대기
-        await document.fonts.load("300 38px PyeongChangPeace-Light");
-        await document.fonts.load("400 16px sans-serif");
+        await document.fonts.load('300 38px PyeongChangPeace-Light');
+        await document.fonts.load('400 16px sans-serif');
 
         // 이미지 로드 대기
         await Promise.all(
-          Array.from(resultRef.current.querySelectorAll("img")).map((img) => {
+          Array.from(resultRef.current.querySelectorAll('img')).map((img) => {
             if (img.complete) return Promise.resolve();
             return new Promise((res) => {
               img.onload = res;
@@ -493,7 +493,7 @@ function FilterScreenRender({
         );
 
         // 저장용 요소를 활성화
-        resultRef.current.classList.add("saving");
+        resultRef.current.classList.add('saving');
         await new Promise((resolve) => setTimeout(resolve, 300));
 
         const canvas = await html2canvas(resultRef.current, {
@@ -501,14 +501,14 @@ function FilterScreenRender({
           width: 800,
           height: 1200,
           useCORS: true,
-          backgroundColor: "#ffffff",
+          backgroundColor: '#ffffff',
           logging: false,
           allowTaint: true,
           removeContainer: false,
           foreignObjectRendering: false,
           imageTimeout: 15000,
           onclone: (clonedDoc) => {
-            const style = clonedDoc.createElement("style");
+            const style = clonedDoc.createElement('style');
             style.textContent = `
               @font-face {
                 font-family: 'PyeongChangPeace-Light';
@@ -521,10 +521,10 @@ function FilterScreenRender({
           },
         });
 
-        resultRef.current.classList.remove("saving");
+        resultRef.current.classList.remove('saving');
 
         // 캐논 프린터 호환 형식으로 프린트 준비
-        const printWindow = window.open("", "_blank");
+        const printWindow = window.open('', '_blank');
         printWindow.document.write(`
           <html>
             <head>
@@ -563,12 +563,12 @@ function FilterScreenRender({
                   (_, index) =>
                     `<div class="print-page">
                   <img src="${canvas.toDataURL(
-                    "image/png",
+                    'image/png',
                     1.0
                   )}" alt="Photo Print ${index + 1}" />
                 </div>`
                 )
-                .join("")}
+                .join('')}
             </body>
           </html>
         `);
@@ -584,8 +584,8 @@ function FilterScreenRender({
 
         console.log(`프린트 완료: ${printCopies}매`);
       } catch (error) {
-        console.error("프린트 오류:", error);
-        alert("프린트 중 오류가 발생했습니다.");
+        console.error('프린트 오류:', error);
+        alert('프린트 중 오류가 발생했습니다.');
       } finally {
         setIsPrinting(false);
       }
@@ -606,9 +606,9 @@ function FilterScreenRender({
               <div className="result-logo-text-date">
                 {`${new Date().getFullYear()}.${String(
                   new Date().getMonth() + 1
-                ).padStart(2, "0")}.${String(new Date().getDate()).padStart(
+                ).padStart(2, '0')}.${String(new Date().getDate()).padStart(
                   2,
-                  "0"
+                  '0'
                 )}`}
               </div>
             </div>
@@ -629,9 +629,9 @@ function FilterScreenRender({
                 <div className="result-logo-text-date">
                   {`${new Date().getFullYear()}.${String(
                     new Date().getMonth() + 1
-                  ).padStart(2, "0")}.${String(new Date().getDate()).padStart(
+                  ).padStart(2, '0')}.${String(new Date().getDate()).padStart(
                     2,
-                    "0"
+                    '0'
                   )}`}
                 </div>
               </div>
@@ -650,9 +650,9 @@ function FilterScreenRender({
                 <div className="result-logo-text-date">
                   {`${new Date().getFullYear()}.${String(
                     new Date().getMonth() + 1
-                  ).padStart(2, "0")}.${String(new Date().getDate()).padStart(
+                  ).padStart(2, '0')}.${String(new Date().getDate()).padStart(
                     2,
-                    "0"
+                    '0'
                   )}`}
                 </div>
               </div>
@@ -670,7 +670,7 @@ function FilterScreenRender({
                 alt="QR Code for download"
                 className="qr-code"
                 onClick={handleQRCodeClick}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: 'pointer' }}
                 title="클릭하여 이미지 보기"
               />
             ) : (
@@ -707,7 +707,7 @@ function FilterScreenRender({
             onClick={handlePrint}
             disabled={isPrinting}
           >
-            {isPrinting ? "프린트 중..." : "프린트"}
+            {isPrinting ? '프린트 중...' : '프린트'}
           </button>
         </div>
 
@@ -721,7 +721,7 @@ function FilterScreenRender({
               );
               containers.forEach((container) => {
                 console.log(
-                  "🧹 홈 버튼: html2canvas-container 정리:",
+                  '🧹 홈 버튼: html2canvas-container 정리:',
                   container
                 );
                 container.remove();
@@ -736,7 +736,7 @@ function FilterScreenRender({
                   canvas.parentElement &&
                   canvas.parentElement !== document.body
                 ) {
-                  console.log("🧹 홈 버튼: 임시 canvas 요소 정리:", canvas);
+                  console.log('🧹 홈 버튼: 임시 canvas 요소 정리:', canvas);
                   canvas.remove();
                 }
               });
@@ -759,7 +759,7 @@ function FilterScreenRender({
               );
               containers.forEach((container) => {
                 console.log(
-                  "🧹 뒤로가기 버튼: html2canvas-container 정리:",
+                  '🧹 뒤로가기 버튼: html2canvas-container 정리:',
                   container
                 );
                 container.remove();
@@ -775,7 +775,7 @@ function FilterScreenRender({
                   canvas.parentElement !== document.body
                 ) {
                   console.log(
-                    "🧹 뒤로가기 버튼: 임시 canvas 요소 정리:",
+                    '🧹 뒤로가기 버튼: 임시 canvas 요소 정리:',
                     canvas
                   );
                   canvas.remove();
