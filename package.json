@@ -3,11 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://https://jaehun-kang.github.io/MRS_photo_booth/",
   "scripts": {
     "dev": "cross-env BROWSER=chrome vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "cross-env BROWSER=chrome vite preview"
+    "preview": "cross-env BROWSER=chrome vite preview",
+    "deploy": "gh-pages -d dist",
+    "predeploy": "npm run build"
   },
   "dependencies": {
     "cross-env": "^7.0.3",
