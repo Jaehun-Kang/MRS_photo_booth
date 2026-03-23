@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://https://jaehun-kang.github.io/MRS_photo_booth/",
+  "homepage": "https://jaehun-kang.github.io/MRS_photo_booth/",
   "scripts": {
     "dev": "cross-env BROWSER=chrome vite",
     "build": "vite build",
