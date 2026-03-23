@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import FilterPreviewRender from "./components/FilterPreviewRender";
 import FilterScreenRender from "./components/FilterScreenRender";
 import WebcamErrorHandler from "./components/WebcamErrorHandler";
 import ImageViewer from "./components/ImageViewer";
+import TimerMode from "./components/TimerMode";
 import "./styles/App.css";
 
 function App() {
@@ -14,11 +16,7 @@ function App() {
     window.devicePixelRatio || 1
   );
 
-  // URLì—ì„œ view ëª¨ë“œ í™•ì¸
-  const urlParams = new URLSearchParams(window.location.search);
-  const isViewMode = urlParams.get("view") === "image";
-
-  // DPR ë³€í™” ê°ì§€ (ë””ë°”ì´ìŠ¤ íˆ´ë°” í† ê¸€ ì‹œ)
+  // DPR º¯È­ °¨Áö (µğ¹ÙÀÌ½º Åø¹Ù Åä±Û ½Ã)
   useEffect(() => {
     const handleDPRChange = () => {
       const newDPR = window.devicePixelRatio || 1;
@@ -26,7 +24,7 @@ function App() {
       setDevicePixelRatio(newDPR);
     };
 
-    // DPR ë³€í™” ê°ì§€ë¥¼ ìœ„í•œ MediaQuery ì‚¬ìš©
+    // DPR º¯È­ °¨Áö¸¦ À§ÇÑ MediaQuery »ç¿ë
     const mediaQuery = window.matchMedia(
       `(resolution: ${window.devicePixelRatio}dppx)`
     );
@@ -53,31 +51,43 @@ function App() {
     return <WebcamErrorHandler error={webcamError} />;
   }
 
-  // ì´ë¯¸ì§€ ë·°ì–´ ëª¨ë“œì¸ ê²½ìš°
-  if (isViewMode) {
-    return <ImageViewer />;
-  }
-
   return (
-    <div className="App">
-      {selectedFilter === null ? (
-        <FilterPreviewRender
-          onSelectFilter={setSelectedFilter}
-          selectedDeviceId={selectedDeviceId}
-          onDeviceSelect={handleDeviceSelect}
-          onVideoReady={() => setIsVideoReady(true)}
-          onError={handleWebcamError}
+    <BrowserRouter basename="/MRS_photo_booth">
+      <Routes>
+        {/* Å¸ÀÌ¸Ó ¸ğµå */}
+        <Route path="/timer" element={<TimerMode />} />
+
+        {/* ÀÏ¹İ Æ÷ÅäºÎ½º ¸ğµå */}
+        <Route
+          path="*"
+          element={
+            <div className="App">
+              {/* ÀÌ¹ÌÁö ºä¾î ¸ğµåÀÎ °æ¿ì */}
+              {new URLSearchParams(window.location.search).get("view") ===
+              "image" ? (
+                <ImageViewer />
+              ) : selectedFilter === null ? (
+                <FilterPreviewRender
+                  onSelectFilter={setSelectedFilter}
+                  selectedDeviceId={selectedDeviceId}
+                  onDeviceSelect={handleDeviceSelect}
+                  onVideoReady={() => setIsVideoReady(true)}
+                  onError={handleWebcamError}
+                />
+              ) : (
+                <FilterScreenRender
+                  filterIndex={selectedFilter}
+                  onBack={() => setSelectedFilter(null)}
+                  onHome={() => setSelectedFilter(null)}
+                  selectedDeviceId={selectedDeviceId}
+                  onError={handleWebcamError}
+                />
+              )}
+            </div>
+          }
         />
-      ) : (
-        <FilterScreenRender
-          filterIndex={selectedFilter}
-          onBack={() => setSelectedFilter(null)}
-          onHome={() => setSelectedFilter(null)} // í™ˆ ë²„íŠ¼ìš© ë™ì¼í•œ ë™ì‘
-          selectedDeviceId={selectedDeviceId}
-          onError={handleWebcamError}
-        />
-      )}
-    </div>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
