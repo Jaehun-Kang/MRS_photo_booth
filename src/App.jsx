@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import FilterPreviewRender from "./components/FilterPreviewRender";
 import FilterScreenRender from "./components/FilterScreenRender";
 import WebcamErrorHandler from "./components/WebcamErrorHandler";
@@ -13,10 +13,10 @@ function App() {
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [webcamError, setWebcamError] = useState(null);
   const [devicePixelRatio, setDevicePixelRatio] = useState(
-    window.devicePixelRatio || 1
+    window.devicePixelRatio || 1,
   );
 
-  // DPR º¯È­ °¨Áö (µğ¹ÙÀÌ½º Åø¹Ù Åä±Û ½Ã)
+  // DPR ë³€í™” ê°ì§€ (ë””ë°”ì´ìŠ¤ í™•ëŒ€ ì‹œì— ì¬ë Œë”)
   useEffect(() => {
     const handleDPRChange = () => {
       const newDPR = window.devicePixelRatio || 1;
@@ -24,9 +24,9 @@ function App() {
       setDevicePixelRatio(newDPR);
     };
 
-    // DPR º¯È­ °¨Áö¸¦ À§ÇÑ MediaQuery »ç¿ë
+    // DPR ë³€í™” ê°ì§€ë¥¼ ìœ„í•œ MediaQuery ì‚¬ìš©
     const mediaQuery = window.matchMedia(
-      `(resolution: ${window.devicePixelRatio}dppx)`
+      `(resolution: ${window.devicePixelRatio}dppx)`,
     );
     mediaQuery.addEventListener("change", handleDPRChange);
 
@@ -52,17 +52,17 @@ function App() {
   }
 
   return (
-    <BrowserRouter basename="/MRS_photo_booth">
+    <HashRouter basename="/MRS_photo_booth">
       <Routes>
-        {/* Å¸ÀÌ¸Ó ¸ğµå */}
+        {/* íƒ€ì´ë¨¸ ëª¨ë“œ */}
         <Route path="/timer" element={<TimerMode />} />
 
-        {/* ÀÏ¹İ Æ÷ÅäºÎ½º ¸ğµå */}
+        {/* ì¼ë°˜ í•„í„°ë·° ëª¨ë“œ */}
         <Route
           path="*"
           element={
             <div className="App">
-              {/* ÀÌ¹ÌÁö ºä¾î ¸ğµåÀÎ °æ¿ì */}
+              {/* ì´ë¯¸ì§€ ë·° ë˜ëŠ” í•„í„° ì„ íƒ ë·° */}
               {new URLSearchParams(window.location.search).get("view") ===
               "image" ? (
                 <ImageViewer />
@@ -87,7 +87,7 @@ function App() {
           }
         />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
