@@ -51,8 +51,12 @@ function App() {
     return <WebcamErrorHandler error={webcamError} />;
   }
 
+  const basename = window.location.hostname.includes("github.io")
+    ? "/MRS_photo_booth"
+    : "";
+
   return (
-    <HashRouter basename="/MRS_photo_booth">
+    <HashRouter basename={basename}>
       <Routes>
         {/* 타이머 모드 */}
         <Route path="/timer" element={<TimerMode />} />
