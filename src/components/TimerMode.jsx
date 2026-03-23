@@ -193,7 +193,19 @@ function TimerMode() {
   );
 
   const currentFilter = timerModeFilters[currentFilterIndex];
-  const sketchFactory = currentFilter ? getSketchFactory(currentFilter) : null;
+  const sketchFactory = useCallback(
+    (w, h, onReady) => {
+      if (!currentFilter) return null;
+      return createScreenSketch({
+        video,
+        width: w,
+        height: h,
+        filter: currentFilter,
+        onReady,
+      });
+    },
+    [video, currentFilter],
+  );
 
   return (
     <div className="timer-mode-container">
